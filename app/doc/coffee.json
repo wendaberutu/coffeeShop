@@ -1,0 +1,436 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Documentation",
+    "version": "1.0.0",
+    "description": "API documentation for user, promotion, and menu management."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000/api",
+      "description": "Local server"
+    }
+  ],
+  "paths": {
+    "/send-otp": {
+      "post": {
+        "tags": ["User Management"],
+        "summary": "Send OTP to WhatsApp",
+        "description": "Send OTP code to the user's WhatsApp number using Fonnte.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phone_number": {
+                    "type": "string",
+                    "example": "+6281234567890"
+                  }
+                },
+                "required": ["phone_number"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP sent successfully"
+          },
+          "400": {
+            "description": "Invalid phone number"
+          }
+        }
+      }
+    },
+    "/verify-otp": {
+      "post": {
+        "tags": ["User Management"],
+        "summary": "Verify OTP",
+        "description": "Verify the OTP code sent to the user's WhatsApp.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phone_number": {
+                    "type": "string",
+                    "example": "+6281234567890"
+                  },
+                  "otp_code": {
+                    "type": "string",
+                    "example": "123456"
+                  }
+                },
+                "required": ["phone_number", "otp_code"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OTP verified successfully"
+          },
+          "400": {
+            "description": "Invalid OTP code"
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "tags": ["User Management"],
+        "summary": "User registration",
+        "description": "Register a new user with their personal data.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phone_number": {
+                    "type": "string",
+                    "example": "+6281234567890"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "address": {
+                    "type": "string",
+                    "example": "123 Main St"
+                  },
+                  "age": {
+                    "type": "integer",
+                    "example": 25
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                },
+                "required": ["phone_number", "name", "address", "age", "password"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          },
+          "400": {
+            "description": "Invalid data"
+          }
+        }
+      }
+    },
+
+ "/login": {
+    "post": {
+      "tags": ["User Management"],
+      "summary": "User Login",
+      "description": "Login menggunakan nomor WhatsApp dan password, menghasilkan token auth jika berhasil.",
+      "requestBody": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "whatsapp_number": {
+                  "type": "string",
+                  "example": "628123456789"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "password123"
+                }
+              },
+              "required": ["whatsapp_number", "password"]
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Login berhasil",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "Login successful"
+                  },
+                  "token": {
+                    "type": "string",
+                    "example": "token_string_here"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Kredensial tidak valid",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "Invalid credentials"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Pengguna belum terverifikasi",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "User is not verified. Please verify your account before logging in."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/logout": {
+    "post": {
+      "tags": ["User Management"],
+      "summary": "User Logout",
+      "description": "Logout pengguna dan menghapus token otorisasi.",
+      "parameters": [
+        {
+          "name": "Authorization",
+          "in": "header",
+          "required": true,
+          "description": "Token untuk otorisasi pengguna. Contoh: Bearer 1|HkLN2hu92",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Logout berhasil",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "Logout successful"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+
+
+
+    "/send-promotion": {
+      "post": {
+        "tags": ["Promotion Management"],
+        "summary": "Send promotion",
+        "description": "Send promotional messages to customers, filtered by age group.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "Special discount for you!"
+                  },
+                  "age_group": {
+                    "type": "string",
+                    "enum": ["15-18", "19-23", ">23"],
+                    "example": "19-23"
+                  }
+                },
+                "required": ["message", "age_group"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Promotion sent successfully"
+          },
+          "400": {
+            "description": "Invalid data"
+          }
+        }
+      }
+    },
+    "/menu/create": {
+      "post": {
+        "tags": ["Menu Management"],
+        "summary": "Create menu item",
+        "description": "Add a new menu item to the database.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Latte"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["food", "drink"],
+                    "example": "drink"
+                  },
+                  "price": {
+                    "type": "number",
+                    "example": 25000
+                  },
+                  "photo_url": {
+                    "type": "string",
+                    "example": "https://example.com/latte.jpg"
+                  }
+                },
+                "required": ["name", "type", "price", "photo_url"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Menu item created successfully"
+          },
+          "400": {
+            "description": "Invalid data"
+          }
+        }
+      }
+    },
+    "/menu/update": {
+      "put": {
+        "tags": ["Menu Management"],
+        "summary": "Update menu item",
+        "description": "Update an existing menu item.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "Latte"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["food", "drink"],
+                    "example": "drink"
+                  },
+                  "price": {
+                    "type": "number",
+                    "example": 25000
+                  },
+                  "photo_url": {
+                    "type": "string",
+                    "example": "https://example.com/latte.jpg"
+                  }
+                },
+                "required": ["id", "name", "type", "price", "photo_url"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Menu item updated successfully"
+          },
+          "400": {
+            "description": "Invalid data"
+          }
+        }
+      }
+    },
+    "/menu/show": {
+      "get": {
+        "tags": ["Menu Management"],
+        "summary": "Show menu item",
+        "description": "Retrieve a specific menu item by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Menu item details retrieved successfully"
+          },
+          "404": {
+            "description": "Menu item not found"
+          }
+        }
+      }
+    },
+    "/menu/delete": {
+      "delete": {
+        "tags": ["Menu Management"],
+        "summary": "Delete menu item",
+        "description": "Delete an existing menu item by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Menu item deleted successfully"
+          },
+          "404": {
+            "description": "Menu item not found"
+          }
+        }
+      }
+    }
+  }
+}
