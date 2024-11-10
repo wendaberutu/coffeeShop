@@ -3,6 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\OtpController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
+
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,4 +24,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/request-otp', [OtpController::class, 'requestOtp']);
 Route::post('/verify-otp', [OtpController::class, 'verifyOtp']);
 
+Route::group([
+    'middleware'=> 'api',
+    'prefix' => 'auth'
+], function(){
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
+});
 
+// Menggunakan Route::resource untuk kategori
+Route::group([
+    'middleware' => 'api',
+], function () {
+    Route::resource('categories', CategoryController::class);
+});
