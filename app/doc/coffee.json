@@ -11,6 +11,7 @@
       "description": "Local server"
     }
   ],
+  
   "paths": {
     "/send-otp": {
       "post": {

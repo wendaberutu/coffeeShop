@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Category;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -30,15 +31,29 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        // Create a new category directly from the request data
-        $category = Category::create($request->all());
+        // Make validator
+    $validator = Validator::make($request->all(), [
+        'nama_kategori' => 'required',
+        'deskripsi' => 'required',
+        'gambar' => 'required'
+    ]);
 
-        // Return a success response with the created category data
-        return response()->json([
-            'data' => $category
-        ], 201);
+    // Check if validation fails
+    if ($validator->fails()) {
+        return response()->json(
+            $validator->errors(),
+            422
+        );
     }
+
+    // Create a new category directly from the request data
+    $category = Category::create($request->all());
+
+    // Return a success response with the created category data
+    return response()->json([
+        'data' => $category
+    ], 201);
+}
 
     /**
      * Display the specified resource.
