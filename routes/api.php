@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\Api\SliderController;
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,4 +43,5 @@ Route::group([
     Route::resource('sliders', SliderController::class);
     Route::resource('products', ProductController::class);
     Route::resource('members', MemberController::class);
+    Route::resource('orders', OrderController::class);
 });
