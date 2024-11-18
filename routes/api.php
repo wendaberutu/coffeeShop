@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\OtpController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
-
+use App\Http\Controllers\Api\SliderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,4 +37,5 @@ Route::group([
     'middleware' => 'api',
 ], function () {
     Route::resource('categories', CategoryController::class);
+    Route::resource('sliders', SliderController::class);
 });
