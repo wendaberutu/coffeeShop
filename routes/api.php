@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\OtpController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\Api\SliderController;
 
@@ -40,4 +41,5 @@ Route::group([
     Route::resource('categories', CategoryController::class);
     Route::resource('sliders', SliderController::class);
     Route::resource('products', ProductController::class);
+    Route::resource('members', MemberController::class);
 });
