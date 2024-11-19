@@ -14,9 +14,8 @@ return new class extends Migration
         // Create orders table
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_member');
-            $table->string('invoice')->unique();
-            $table->integer('grand_total');
+            $table->unsignedBigInteger('id_member'); // Relasi ke members
+            $table->string('nomor_meja')->unique(); // Perbaikan penamaan kolom
             $table->timestamps();
 
             // Foreign key constraint
@@ -26,10 +25,9 @@ return new class extends Migration
         // Create order_details table
         Schema::create('order_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_order');
-            $table->unsignedBigInteger('id_produk');
+            $table->unsignedBigInteger('id_order'); // Relasi ke orders
+            $table->unsignedBigInteger('id_produk'); // Relasi ke products
             $table->integer('jumlah');
-            $table->integer('total');
             $table->timestamps();
 
             // Foreign key constraints

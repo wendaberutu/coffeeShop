@@ -7,8 +7,9 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SliderController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Api\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,8 +32,9 @@ Route::group([
     'middleware'=> 'api',
     'prefix' => 'auth'
 ], function(){
-    Route::post('login', [AuthController::class, 'login']);
+    Route::post('admin', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login_member']);
 });
 
 // Menggunakan Route::resource untuk kategori
@@ -44,4 +46,6 @@ Route::group([
     Route::resource('products', ProductController::class);
     Route::resource('members', MemberController::class);
     Route::resource('orders', OrderController::class);
+
 });
+Route::get('reports', [ReportController::class, 'index']);
