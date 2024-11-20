@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Models\Member;
 
 class AuthController extends Controller
 {
@@ -12,12 +15,10 @@ class AuthController extends Controller
     {
         $credentials = request(['no_whatshap', 'password']);
 
-        // Mengembalikan error jika autentikasi gagal
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Nomor atau password salah'], 401);
+            return response()->json(['error' => 'Nomor WhatsApp atau password salah'], 401);
         }
 
-        // Mengembalikan token jika autentikasi berhasil
         return $this->respondWithToken($token);
     }
 
@@ -29,29 +30,49 @@ class AuthController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
     }
+
     public function register(Request $request)
     {
+        Log::info('Request Data:', $request->all());
+
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'umur' => 'required|integer',
+            'umur' => 'required|integer|min:1|max:150',
             'tanggal_lahir' => 'required|date',
-            'no_whatshap' => 'required|digits_between:10,15|unique:users',
+            'no_whatshap' => 'required|string|digits_between:10,15|unique:users',
             'password' => 'required|string|min:6',
+            'alamat' => 'required|string|max:500',
+            'email' => 'required|string|email|max:255|unique:users'
         ]);
 
-        $user = new User([
+        Log::info('Validated Data:', $validatedData);
+
+        // Create user
+        $user = User::create([
             'nama' => $validatedData['nama'],
-            'email' => $validatedData['email'],
             'umur' => $validatedData['umur'],
             'tanggal_lahir' => $validatedData['tanggal_lahir'],
             'no_whatshap' => $validatedData['no_whatshap'],
+            'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
-            'role' => 'user'  // Default role
+            'alamat' => $validatedData['alamat'],
+            'role' => 'user'
         ]);
 
-        $user->save();
+        // Create member
+        Member::create([
+            'user_id' => $user->id,
+            'nama_member' => $validatedData['nama'],
+            'alamat' => $validatedData['alamat'],
+            'email' => $validatedData['email'],
+            'no_whatshap' => $validatedData['no_whatshap'],
+            'umur' => $validatedData['umur'],
+            'tanggal_lahir' => $validatedData['tanggal_lahir']
+        ]);
 
-        return response()->json(['message' => 'User berhasil didaftarkan'], 201);
+        return response()->json([
+            'message' => 'User berhasil didaftarkan dan data member dibuat',
+            'user' => $user->only(['nama', 'umur', 'tanggal_lahir', 'no_whatshap', 'role', 'email']),
+        ], 201);
     }
 }

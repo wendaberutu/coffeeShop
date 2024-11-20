@@ -9,17 +9,11 @@ use Illuminate\Support\Facades\Validator;
 
 class MemberController extends Controller
 {
-    /**
-     * Apply middleware to protect routes except 'index'.
-     */
     public function __construct()
     {
         $this->middleware('auth:api')->except(['index']);
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $members = Member::all();
@@ -29,29 +23,22 @@ class MemberController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        // Validate the request
         $validator = Validator::make($request->all(), [
             'nama_member' => 'required|string|max:255',
             'alamat' => 'required|string|max:500',
-            'no_hp' => 'required|string|max:15',
-            'email' => 'required|email|unique:members,email',
-            'password' => 'required|string|min:6',
+            'no_whatshap' => 'required|string|digits_between:10,15|unique:members,no_whatshap',
+            'umur' => 'required|integer|min:1|max:150', // Validasi umur harus diisi
+            'email' => 'required|email|max:255|unique:members,email',
+            'tanggal_lahir' => 'required|date',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $input = $request->all();
-        $input['password'] = bcrypt($request->password); // Hash the password
-
-        // Create a new member
-        $member = Member::create($input);
+        $member = Member::create($request->all());
 
         return response()->json([
             'message' => 'Member created successfully',
@@ -59,9 +46,6 @@ class MemberController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $member = Member::find($id);
@@ -73,9 +57,6 @@ class MemberController extends Controller
         return response()->json(['data' => $member]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $member = Member::find($id);
@@ -84,28 +65,20 @@ class MemberController extends Controller
             return response()->json(['message' => 'Member not found'], 404);
         }
 
-        // Validate the request
         $validator = Validator::make($request->all(), [
             'nama_member' => 'sometimes|string|max:255',
             'alamat' => 'sometimes|string|max:500',
-            'no_hp' => 'sometimes|string|max:15',
-            'email' => 'sometimes|email|unique:members,email,' . $member->id,
-            'password' => 'sometimes|string|min:6',
+            'no_whatshap' => 'sometimes|string|digits_between:10,15|unique:members,no_whatshap,' . $id,
+            'umur' => 'sometimes|integer|min:1|max:150', // Validasi umur harus tetap sesuai
+            'email' => 'sometimes|email|max:255|unique:members,email,' . $id,
+            'tanggal_lahir' => 'sometimes|date',
         ]);
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $input = $request->all();
-
-        // Hash the password if provided
-        if ($request->has('password')) {
-            $input['password'] = bcrypt($request->password);
-        }
-
-        // Update the member
-        $member->update($input);
+        $member->update($request->all());
 
         return response()->json([
             'message' => 'Member updated successfully',
@@ -113,9 +86,6 @@ class MemberController extends Controller
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $member = Member::find($id);
@@ -124,7 +94,6 @@ class MemberController extends Controller
             return response()->json(['message' => 'Member not found'], 404);
         }
 
-        // Delete the member
         $member->delete();
 
         return response()->json(['message' => 'Member deleted successfully']);
