@@ -39,15 +39,41 @@ Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
 });
 
-// Routes dengan middleware API
-Route::middleware('api')->group(function () {
-    // Resource routes
-    Route::resource('categories', CategoryController::class);
-    Route::resource('sliders', SliderController::class);
-    Route::resource('products', ProductController::class);
-    Route::resource('members', MemberController::class);
-    Route::resource('orders', OrderController::class);
+// Routes untuk Member
+Route::middleware(['auth:sanctum'])->group(function () {
+    // Categories
+    Route::get('categories', [CategoryController::class, 'index']);
+    
+    // Sliders
+    Route::get('sliders', [SliderController::class, 'index']);
+    
+    // Products
+    Route::get('products', [ProductController::class, 'index']);
+    Route::get('products/{id}', [ProductController::class, 'show']);
+    
+    // Orders
+    Route::post('orders', [OrderController::class, 'store']);
+    Route::get('orders', [OrderController::class, 'index']);
+});
 
-    // Report routes
+// Routes untuk Admin
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    // Categories (CRUD)
+    Route::resource('categories', CategoryController::class)->except(['index']);
+    
+    // Sliders (CRUD)
+    Route::resource('sliders', SliderController::class)->except(['index']);
+    
+    // Products (CRUD)
+    Route::resource('products', ProductController::class)->except(['index', 'show']);
+    
+    // Members
+    Route::resource('members', MemberController::class);
+    
+    // Orders (kelola status)
+    Route::get('orders', [OrderController::class, 'index']);
+    Route::put('orders/{id}', [OrderController::class, 'update']);
+    
+    // Reports
     Route::get('reports', [ReportController::class, 'index']);
 });
