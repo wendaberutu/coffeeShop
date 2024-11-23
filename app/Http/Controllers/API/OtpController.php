@@ -25,7 +25,7 @@ class OtpController extends Controller
 
         // Buat OTP baru
         $otp = rand(100000, 999999);
-        $waktuKadaluarsa = Carbon::now()->addMinutes(10); // OTP berlaku 5 menit
+        $waktuKadaluarsa = Carbon::now()->addMinutes(5); // OTP berlaku 5 menit
 
         Otp::create([
             'nomor' => $request->nomor,
@@ -54,6 +54,7 @@ class OtpController extends Controller
 
         // Cek apakah OTP dan nomor cocok
         $otpRecord = Otp::where('nomor', $request->nomor)->where('otp', $request->otp)->first();
+        // return ([$request, $otpRecord]);
 
         if (!$otpRecord) {
             return response()->json(['message' => 'Invalid OTP'], 400);
@@ -64,15 +65,15 @@ class OtpController extends Controller
             return response()->json(['message' => 'OTP has expired'], 400);
         }
 
-        // Jika OTP valid, update status is_verified di tabel User
-        $user = User::where('nomor', $request->nomor)->first();
-        // dd($user);
-        if ($user) {
-            $user->is_verified = true;
-            $user->save();  // Simpan perubahan ke database
-        } else {
-            return response()->json(['message' => 'User not found'], 404);
-        }
+        // // Jika OTP valid, update status is_verified di tabel User
+        // $user = User::where('nomor', $request->nomor)->first();
+        // // dd($user);
+        // if ($user) {
+        //     $user->is_verified = true;
+        //     $user->save();  // Simpan perubahan ke database
+        // } else {
+        //     return response()->json(['message' => 'User not found'], 404);
+        // }
 
         return response()->json(['message' => 'OTP verified successfully'], 200);
     }
