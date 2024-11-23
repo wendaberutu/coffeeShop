@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\OtpController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\API\BroadcastController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\MemberController;
 use App\Http\Controllers\Api\ProductController;
@@ -77,3 +78,6 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     // Reports
     Route::get('reports', [ReportController::class, 'index']);
 });
+
+Route::post('send/all', [BroadcastController::class, 'sendBroadcast']);
+Route::post('send/age', [BroadcastController::class, 'broadcastByAge']);
