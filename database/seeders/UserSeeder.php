@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
+
 
 class UserSeeder extends Seeder
 {
@@ -15,6 +15,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+ 
         $users = 
         [            [
                 'nama' => 'WendaAdmin',
@@ -25,11 +26,13 @@ class UserSeeder extends Seeder
                 'alamat' => 'Jogja',
                 'no_whatshap' => '082273500223',
                 'role' => 'admin',
+ 
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'nama' => 'Damar',
+ 
                 'email' => 'damar@gmail.com',
                 'password' => Hash::make('damar123'),
                 'umur' => 20, // Ensure umur is set
@@ -49,6 +52,7 @@ class UserSeeder extends Seeder
                 'alamat' => 'Jogja',
                 'no_whatshap' => '082155495919',
                 'role' => 'user',
+ 
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -69,9 +73,5 @@ class UserSeeder extends Seeder
         User::insert($users);
 
 
-
-
-
-      
     }
 }

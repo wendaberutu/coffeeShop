@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash; 
 use Illuminate\Support\Facades\Http;
 
 class BroadcastController extends Controller
 {
+
     public function sendBroadcast(Request $request)
     {
         // Validasi input
@@ -25,6 +28,7 @@ class BroadcastController extends Controller
         foreach ($users as $user) {
             $messages[] = [
                 'target' => (string) $user->no_whatshap, // Pastikan target dalam format string
+
                 'message' => 'Halo ' . $user->nama . '! \n\n' . $request->message, // Pesan sebagai string
                 'delay' => '3', // Jeda 1 detik untuk setiap pengiriman (gunakan string)
             ];
@@ -82,7 +86,7 @@ class BroadcastController extends Controller
         ], 200);
     }
 
- 
+
     public function broadcastByAge(Request $request)
     {
         // Validasi input
@@ -107,6 +111,7 @@ class BroadcastController extends Controller
                 'target' => (string) $user->no_whatshap, // Pastikan target dalam format string
                 'message' => 'Halo ' . $user->nama . '!\n\n' . 'Kami menghadirkan promo spesial untuk Anda yang berusia ' . $awal . ' hingga ' . $akhir . ' tahun.' . $message, // Pesan yang dikirimkan
                 'delay' => '3', // Jeda 1 detik untuk setiap pengiriman
+ 
             ];
         }
 
@@ -150,4 +155,7 @@ class BroadcastController extends Controller
             'response' => json_decode($response->body(), true), // Untuk melihat detail respons
         ], 200);
     }
-}
+ 
+
+} 
+ 
