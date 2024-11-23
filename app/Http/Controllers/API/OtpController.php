@@ -65,16 +65,7 @@ class OtpController extends Controller
             return response()->json(['message' => 'OTP has expired'], 400);
         }
 
-        // // Jika OTP valid, update status is_verified di tabel User
-        // $user = User::where('nomor', $request->nomor)->first();
-        // // dd($user);
-        // if ($user) {
-        //     $user->is_verified = true;
-        //     $user->save();  // Simpan perubahan ke database
-        // } else {
-        //     return response()->json(['message' => 'User not found'], 404);
-        // }
-
+       
         return response()->json(['message' => 'OTP verified successfully'], 200);
     }
 }
