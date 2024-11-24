@@ -96,7 +96,7 @@ class ProductController extends Controller
         $validator = Validator::make($request->all(), [
             'deskripsi' => 'required',
             'gambar' => 'nullable|image|mimes:jpg,png,jpeg',
-            'id_kategori' => 'required',
+            'kategori' => 'required',
             'nama_produk' => 'required',
             'harga' => 'required|numeric',
             'diskon' => 'required|numeric',

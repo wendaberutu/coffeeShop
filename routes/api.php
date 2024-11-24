@@ -44,8 +44,7 @@ Route::prefix('auth')->group(function () {
 // Routes dengan middleware API
 Route::middleware('api')->group(function () {
     // Resource routes
-    Route::resource('categories', CategoryController::class);
-    Route::resource('sliders', SliderController::class);
+
     Route::resource('products', ProductController::class);
     Route::resource('members', MemberController::class);
     Route::resource('orders', OrderController::class);
