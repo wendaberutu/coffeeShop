@@ -14,7 +14,6 @@ class Kernel extends HttpKernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
-        // \App\Http\Middleware\TrustHosts::class,
         \App\Http\Middleware\TrustProxies::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
@@ -25,6 +24,8 @@ class Kernel extends HttpKernel
 
     /**
      * The application's route middleware groups.
+     *
+     * These middleware groups may be assigned to groups or used individually.
      *
      * @var array<string, array<int, class-string|string>>
      */
@@ -39,9 +40,9 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class, // Middleware Sanctum untuk autentikasi
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api', // Pembatasan permintaan API
+            \Illuminate\Routing\Middleware\SubstituteBindings::class, // Resolusi rute
         ],
     ];
 
@@ -63,9 +64,9 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-    ];
-    protected $routeMiddleware = [
-        // middleware lainnya
+
+        // Custom Middleware
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'member' => \App\Http\Middleware\MemberMiddleware::class,
     ];
 }

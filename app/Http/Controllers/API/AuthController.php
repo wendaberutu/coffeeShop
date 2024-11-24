@@ -6,36 +6,76 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Member;
 
 class AuthController extends Controller
 {
-    public function login()
+    /**
+     * Handle user login
+     */
+    public function login(Request $request)
     {
-        $credentials = request(['no_whatshap', 'password']);
+        // Validasi input login
+        $validator = Validator::make($request->all(), [
+            'no_whatshap' => 'required|string|digits_between:10,15',
+            'password' => 'required|string|min:6',
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $credentials = $request->only('no_whatshap', 'password');
+
+        // Cek autentikasi
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Nomor WhatsApp atau password salah'], 401);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Nomor WhatsApp atau password salah'
+            ], 401);
         }
 
         return $this->respondWithToken($token);
     }
 
+    /**
+     * Return a token response with user details
+     */
     protected function respondWithToken($token)
     {
+        $user = auth()->user();
+
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'status' => 'success',
+            'message' => 'Login successful',
+            'data' => [
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth()->factory()->getTTL() * 60,
+                'user' => [
+                    'id' => $user->id,
+                    'nama' => $user->nama,
+                    'email' => $user->email,
+                    'role' => $user->role
+                ]
+            ]
         ]);
     }
 
+    /**
+     * Handle user registration
+     */
     public function register(Request $request)
     {
-        Log::info('Request Data:', $request->all());
-
-        $validatedData = $request->validate([
+        // Validasi input
+        $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'umur' => 'required|integer|min:1|max:150',
             'tanggal_lahir' => 'required|date',
@@ -45,34 +85,70 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users'
         ]);
 
-        Log::info('Validated Data:', $validatedData);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
-        // Create user
+        // Log data input untuk debugging
+        Log::info('Validated Data:', $request->all());
+
+        // Buat user baru
         $user = User::create([
-            'nama' => $validatedData['nama'],
-            'umur' => $validatedData['umur'],
-            'tanggal_lahir' => $validatedData['tanggal_lahir'],
-            'no_whatshap' => $validatedData['no_whatshap'],
-            'email' => $validatedData['email'],
-            'password' => bcrypt($validatedData['password']),
-            'alamat' => $validatedData['alamat'],
-            'role' => 'user'
+            'nama' => $request->nama,
+            'umur' => $request->umur,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'no_whatshap' => $request->no_whatshap,
+            'email' => $request->email,
+            'password' => Hash::make($request->password), // Gunakan Hash::make untuk keamanan
+            'alamat' => $request->alamat,
+            'role' => 'user' // Default role untuk pengguna baru
         ]);
 
-        // Create member
+        // Buat data member terkait
         Member::create([
             'user_id' => $user->id,
-            'nama_member' => $validatedData['nama'],
-            'alamat' => $validatedData['alamat'],
-            'email' => $validatedData['email'],
-            'no_whatshap' => $validatedData['no_whatshap'],
-            'umur' => $validatedData['umur'],
-            'tanggal_lahir' => $validatedData['tanggal_lahir']
+            'nama_member' => $request->nama,
+            'alamat' => $request->alamat,
+            'email' => $request->email,
+            'no_whatshap' => $request->no_whatshap,
+            'umur' => $request->umur,
+            'tanggal_lahir' => $request->tanggal_lahir
         ]);
 
         return response()->json([
+            'status' => 'success',
             'message' => 'User berhasil didaftarkan dan data member dibuat',
-            'user' => $user->only(['nama', 'umur', 'tanggal_lahir', 'no_whatshap', 'role', 'email']),
+            'data' => $user->only(['id', 'nama', 'email', 'role', 'umur', 'tanggal_lahir', 'no_whatshap']),
         ], 201);
+    }
+
+    /**
+     * Handle user logout
+     */
+    public function logout()
+    {
+        auth()->logout();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Logout successful'
+        ]);
+    }
+
+    /**
+     * Get authenticated user details
+     */
+    public function me()
+    {
+        $user = auth()->user();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $user
+        ]);
     }
 }

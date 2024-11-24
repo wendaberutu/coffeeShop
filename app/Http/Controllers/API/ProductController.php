@@ -5,17 +5,17 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
     /**
-     * Apply middleware to protect routes except 'index'.
+     * Apply middleware to protect routes except 'index' and 'show'.
      */
     public function __construct()
     {
-        $this->middleware('auth:api')->except(['index']);
+        $this->middleware('auth:api')->except(['index', 'show']);
     }
 
     /**
@@ -26,6 +26,7 @@ class ProductController extends Controller
         $products = Product::all();
 
         return response()->json([
+            'status' => 'success',
             'data' => $products
         ]);
     }
@@ -37,32 +38,35 @@ class ProductController extends Controller
     {
         // Validate the request
         $validator = Validator::make($request->all(), [
-            'deskripsi' => 'required',
-            'gambar' => 'required|image|mimes:jpg,png,jpeg',
-            'id_kategori' => 'required',
-            'nama_produk' => 'required',
-            'harga' => 'required|numeric',
-            'diskon' => 'required|numeric',
+            'deskripsi' => 'required|string',
+            'gambar' => 'required|image|mimes:jpg,png,jpeg|max:2048',
+            'kategori' => 'required|string|max:255', // Tidak lagi memeriksa tabel categories
+            'nama_produk' => 'required|string|max:255',
+            'harga' => 'required|numeric|min:0',
+            'diskon' => 'nullable|numeric|min:0|max:100',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         $input = $request->all();
 
         // Handle image upload
         if ($request->hasFile('gambar')) {
-            $gambar = $request->file('gambar');
-            $nama_gambar = time() . rand(1, 9) . '.' . $gambar->getClientOriginalExtension();
-            $gambar->move('uploads', $nama_gambar);
-            $input['gambar'] = $nama_gambar;
+            $input['gambar'] = $request->file('gambar')->store('uploads', 'public'); // Store file in public/uploads
         }
 
         // Create a new product
         $product = Product::create($input);
 
         return response()->json([
+            'status' => 'success',
+            'message' => 'Product created successfully',
             'data' => $product
         ], 201);
     }
@@ -75,10 +79,16 @@ class ProductController extends Controller
         $product = Product::find($id);
 
         if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found'
+            ], 404);
         }
 
-        return response()->json(['data' => $product]);
+        return response()->json([
+            'status' => 'success',
+            'data' => $product
+        ]);
     }
 
     /**
@@ -89,21 +99,28 @@ class ProductController extends Controller
         $product = Product::find($id);
 
         if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found'
+            ], 404);
         }
 
         // Validate the request
         $validator = Validator::make($request->all(), [
-            'deskripsi' => 'required',
-            'gambar' => 'nullable|image|mimes:jpg,png,jpeg',
-            'kategori' => 'required',
-            'nama_produk' => 'required',
-            'harga' => 'required|numeric',
-            'diskon' => 'required|numeric',
+            'deskripsi' => 'nullable|string',
+            'gambar' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'kategori' => 'nullable|string|max:255', // Tidak lagi memeriksa tabel categories
+            'nama_produk' => 'nullable|string|max:255',
+            'harga' => 'nullable|numeric|min:0',
+            'diskon' => 'nullable|numeric|min:0|max:100',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
         }
 
         $input = $request->all();
@@ -111,22 +128,18 @@ class ProductController extends Controller
         // Handle image upload
         if ($request->hasFile('gambar')) {
             // Delete the old image
-            if ($product->gambar) {
-                File::delete('uploads/' . $product->gambar);
+            if ($product->gambar && Storage::disk('public')->exists($product->gambar)) {
+                Storage::disk('public')->delete($product->gambar);
             }
 
-            $gambar = $request->file('gambar');
-            $nama_gambar = time() . rand(1, 9) . '.' . $gambar->getClientOriginalExtension();
-            $gambar->move('uploads', $nama_gambar);
-            $input['gambar'] = $nama_gambar;
-        } else {
-            unset($input['gambar']);
+            $input['gambar'] = $request->file('gambar')->store('uploads', 'public');
         }
 
         // Update the product
         $product->update($input);
 
         return response()->json([
+            'status' => 'success',
             'message' => 'Product updated successfully',
             'data' => $product
         ]);
@@ -140,17 +153,23 @@ class ProductController extends Controller
         $product = Product::find($id);
 
         if (!$product) {
-            return response()->json(['message' => 'Product not found'], 404);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Product not found'
+            ], 404);
         }
 
         // Delete the image if it exists
-        if ($product->gambar) {
-            File::delete('uploads/' . $product->gambar);
+        if ($product->gambar && Storage::disk('public')->exists($product->gambar)) {
+            Storage::disk('public')->delete($product->gambar);
         }
 
         // Delete the product
         $product->delete();
 
-        return response()->json(['message' => 'Product deleted successfully']);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Product deleted successfully'
+        ]);
     }
 }
