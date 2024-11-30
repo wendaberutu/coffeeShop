@@ -17,10 +17,16 @@ class CorsMiddleware
     {
         $response = $next($request);
 
-        // Tambahkan header CORS ke response
-        $response->headers->set('Access-Control-Allow-Origin', '*');
+        // Menangani preflight request (OPTIONS)
+        if ($request->getMethod() == "OPTIONS") {
+            return response()->json([], Response::HTTP_NO_CONTENT);
+        }
+
+        // Mengatur header CORS
+        $response->headers->set('Access-Control-Allow-Origin', 'http://frontend-domain.com'); // Ganti dengan domain frontend Anda
         $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         $response->headers->set('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, Authorization, X-Requested-With');
+        $response->headers->set('Access-Control-Allow-Credentials', 'true'); // Untuk mendukung cookies atau token
 
         return $response;
     }

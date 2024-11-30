@@ -48,12 +48,18 @@ Route::prefix('otp')->group(function () {
 | Routes for authentication actions (login, register, logout, etc.).
 */
 Route::prefix('auth')->group(function () {
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-    Route::get('me', [AuthController::class, 'me'])->middleware('auth:sanctum');
-});
+    // Route untuk login - Tidak memerlukan autentikasi
+    Route::post('login', [AuthController::class, 'login']);  // Proses login dan menghasilkan token JWT
 
+    // Route untuk registrasi - Tidak memerlukan autentikasi
+    Route::post('register', [AuthController::class, 'register']);  // Proses registrasi pengguna baru
+
+    // Route untuk logout - Memerlukan autentikasi dengan token JWT
+    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');  // Logout dan menghapus token JWT
+
+    // Route untuk mendapatkan data user yang sedang login - Memerlukan autentikasi dengan token JWT
+    Route::get('me', [AuthController::class, 'me'])->middleware('auth:api');  // Ambil data pengguna yang sedang login
+});
 /*
 |--------------------------------------------------------------------------
 | Admin Routes (Protected)
