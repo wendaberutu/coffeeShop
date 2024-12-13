@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SliderController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\API\RegisterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,12 +48,13 @@ Route::prefix('otp')->group(function () {
 |--------------------------------------------------------------------------
 | Routes for authentication actions (login, register, logout, etc.).
 */
+Route::post('register', [RegisterController::class, 'register']);  // Proses registrasi pengguna baru
 Route::prefix('auth')->group(function () {
     // Route untuk login - Tidak memerlukan autentikasi
     Route::post('login', [AuthController::class, 'login']);  // Proses login dan menghasilkan token JWT
 
     // Route untuk registrasi - Tidak memerlukan autentikasi
-    Route::post('register', [AuthController::class, 'register']);  // Proses registrasi pengguna baru
+    // Route::post('register', [AuthController::class, 'register']);  // Proses registrasi pengguna baru
 
     // Route untuk logout - Memerlukan autentikasi dengan token JWT
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');  // Logout dan menghapus token JWT
