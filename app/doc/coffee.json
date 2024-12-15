@@ -1,23 +1,23 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "API Documentation",
+    "title": "Dokumentasi API",
     "version": "1.0.0",
-    "description": "API documentation for user, promotion, and menu management."
+    "description": "Dokumentasi API untuk manajemen pengguna, promosi, dan menu."
   },
   "servers": [
     {
       "url": "http://127.0.0.1:8000/api",
-      "description": "Local server"
+      "description": "Server lokal"
     }
   ],
   
   "paths": {
     "/send-otp": {
       "post": {
-        "tags": ["User Management"],
-        "summary": "Send OTP to WhatsApp",
-        "description": "Send OTP code to the user's WhatsApp number using Fonnte.",
+        "tags": ["Manajemen Pengguna"],
+        "summary": "Kirim OTP ke WhatsApp",
+        "description": "Kirim kode OTP ke nomor WhatsApp pengguna menggunakan Fonnte.",
         "requestBody": {
           "required": true,
           "content": {
@@ -37,19 +37,19 @@
         },
         "responses": {
           "200": {
-            "description": "OTP sent successfully"
+            "description": "OTP berhasil dikirim"
           },
           "400": {
-            "description": "Invalid phone number"
+            "description": "Nomor telepon tidak valid"
           }
         }
       }
     },
     "/verify-otp": {
       "post": {
-        "tags": ["User Management"],
-        "summary": "Verify OTP",
-        "description": "Verify the OTP code sent to the user's WhatsApp.",
+        "tags": ["Manajemen Pengguna"],
+        "summary": "Verifikasi OTP",
+        "description": "Verifikasi kode OTP yang dikirimkan ke WhatsApp pengguna.",
         "requestBody": {
           "required": true,
           "content": {
@@ -73,19 +73,19 @@
         },
         "responses": {
           "200": {
-            "description": "OTP verified successfully"
+            "description": "OTP berhasil diverifikasi"
           },
           "400": {
-            "description": "Invalid OTP code"
+            "description": "Kode OTP tidak valid"
           }
         }
       }
     },
     "/register": {
       "post": {
-        "tags": ["User Management"],
-        "summary": "User registration",
-        "description": "Register a new user with their personal data.",
+        "tags": ["Manajemen Pengguna"],
+        "summary": "Registrasi Pengguna",
+        "description": "Daftarkan pengguna baru dengan data pribadi mereka.",
         "requestBody": {
           "required": true,
           "content": {
@@ -121,87 +121,88 @@
         },
         "responses": {
           "201": {
-            "description": "User registered successfully"
+            "description": "Pengguna berhasil didaftarkan"
           },
           "400": {
-            "description": "Invalid data"
+            "description": "Data tidak valid"
           }
         }
       }
     },
 
- "/login": {
-    "post": {
-      "tags": ["User Management"],
-      "summary": "User Login",
-      "description": "Login menggunakan nomor WhatsApp dan password, menghasilkan token auth jika berhasil.",
-      "requestBody": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "whatsapp_number": {
-                  "type": "string",
-                  "example": "628123456789"
-                },
-                "password": {
-                  "type": "string",
-                  "example": "password123"
-                }
-              },
-              "required": ["whatsapp_number", "password"]
-            }
-          }
-        }
-      },
-      "responses": {
-        "200": {
-          "description": "Login berhasil",
+    "/login": {
+      "post": {
+        "tags": ["Manajemen Pengguna"],
+        "summary": "Login Pengguna",
+        "description": "Login menggunakan nomor WhatsApp dan password, menghasilkan token auth jika berhasil.",
+        "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "message": {
+                  "whatsapp_number": {
                     "type": "string",
-                    "example": "Login successful"
+                    "example": "628123456789"
                   },
-                  "token": {
+                  "password": {
                     "type": "string",
-                    "example": "token_string_here"
+                    "example": "password123"
                   }
-                }
+                },
+                "required": ["whatsapp_number", "password"]
               }
             }
           }
         },
-        "401": {
-          "description": "Kredensial tidak valid",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "message": {
-                    "type": "string",
-                    "example": "Invalid credentials"
+        "responses": {
+          "200": {
+            "description": "Login berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Login berhasil"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "token_string_here"
+                    }
                   }
                 }
               }
             }
-          }
-        },
-        "403": {
-          "description": "Pengguna belum terverifikasi",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "message": {
-                    "type": "string",
-                    "example": "User is not verified. Please verify your account before logging in."
+          },
+          "401": {
+            "description": "Kredensial tidak valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Kredensial tidak valid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Pengguna belum terverifikasi",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Pengguna belum terverifikasi. Harap verifikasi akun Anda sebelum login."
+                    }
                   }
                 }
               }
@@ -209,35 +210,35 @@
           }
         }
       }
-    }
-  },
-  "/logout": {
-    "post": {
-      "tags": ["User Management"],
-      "summary": "User Logout",
-      "description": "Logout pengguna dan menghapus token otorisasi.",
-      "parameters": [
-        {
-          "name": "Authorization",
-          "in": "header",
-          "required": true,
-          "description": "Token untuk otorisasi pengguna. Contoh: Bearer 1|HkLN2hu92",
-          "schema": {
-            "type": "string"
+    },
+    "/logout": {
+      "post": {
+        "tags": ["Manajemen Pengguna"],
+        "summary": "Logout Pengguna",
+        "description": "Logout pengguna dan hapus token otorisasi.",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Token untuk otorisasi pengguna. Contoh: Bearer 1|HkLN2hu92",
+            "schema": {
+              "type": "string"
+            }
           }
-        }
-      ],
-      "responses": {
-        "200": {
-          "description": "Logout berhasil",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "message": {
-                    "type": "string",
-                    "example": "Logout successful"
+        ],
+        "responses": {
+          "200": {
+            "description": "Logout berhasil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Logout berhasil"
+                    }
                   }
                 }
               }
@@ -245,16 +246,13 @@
           }
         }
       }
-    }
-  },
-
-
+    },
 
     "/send-promotion": {
       "post": {
-        "tags": ["Promotion Management"],
-        "summary": "Send promotion",
-        "description": "Send promotional messages to customers, filtered by age group.",
+        "tags": ["Manajemen Promosi"],
+        "summary": "Kirim Promosi",
+        "description": "Kirim pesan promosi kepada pelanggan, difilter berdasarkan kelompok umur.",
         "requestBody": {
           "required": true,
           "content": {
@@ -264,7 +262,7 @@
                 "properties": {
                   "message": {
                     "type": "string",
-                    "example": "Special discount for you!"
+                    "example": "Diskon spesial untuk Anda!"
                   },
                   "age_group": {
                     "type": "string",
@@ -279,19 +277,19 @@
         },
         "responses": {
           "200": {
-            "description": "Promotion sent successfully"
+            "description": "Promosi berhasil dikirim"
           },
           "400": {
-            "description": "Invalid data"
+            "description": "Data tidak valid"
           }
         }
       }
     },
     "/menu/create": {
       "post": {
-        "tags": ["Menu Management"],
-        "summary": "Create menu item",
-        "description": "Add a new menu item to the database.",
+        "tags": ["Manajemen Menu"],
+        "summary": "Buat item menu",
+        "description": "Tambah item menu baru ke dalam database.",
         "requestBody": {
           "required": true,
           "content": {
@@ -324,19 +322,19 @@
         },
         "responses": {
           "201": {
-            "description": "Menu item created successfully"
+            "description": "Item menu berhasil dibuat"
           },
           "400": {
-            "description": "Invalid data"
+            "description": "Data tidak valid"
           }
         }
       }
     },
     "/menu/update": {
       "put": {
-        "tags": ["Menu Management"],
-        "summary": "Update menu item",
-        "description": "Update an existing menu item.",
+        "tags": ["Manajemen Menu"],
+        "summary": "Perbarui item menu",
+        "description": "Perbarui item menu yang sudah ada.",
         "requestBody": {
           "required": true,
           "content": {
@@ -373,19 +371,19 @@
         },
         "responses": {
           "200": {
-            "description": "Menu item updated successfully"
+            "description": "Item menu berhasil diperbarui"
           },
           "400": {
-            "description": "Invalid data"
+            "description": "Data tidak valid"
           }
         }
       }
     },
     "/menu/show": {
       "get": {
-        "tags": ["Menu Management"],
-        "summary": "Show menu item",
-        "description": "Retrieve a specific menu item by its ID.",
+        "tags": ["Manajemen Menu"],
+        "summary": "Tampilkan item menu",
+        "description": "Ambil detail item menu berdasarkan ID.",
         "parameters": [
           {
             "name": "id",
@@ -399,19 +397,19 @@
         ],
         "responses": {
           "200": {
-            "description": "Menu item details retrieved successfully"
+            "description": "Detail item menu berhasil diambil"
           },
           "404": {
-            "description": "Menu item not found"
+            "description": "Item menu tidak ditemukan"
           }
         }
       }
     },
     "/menu/delete": {
       "delete": {
-        "tags": ["Menu Management"],
-        "summary": "Delete menu item",
-        "description": "Delete an existing menu item by its ID.",
+        "tags": ["Manajemen Menu"],
+        "summary": "Hapus item menu",
+        "description": "Hapus item menu yang sudah ada berdasarkan ID.",
         "parameters": [
           {
             "name": "id",
@@ -425,10 +423,10 @@
         ],
         "responses": {
           "200": {
-            "description": "Menu item deleted successfully"
+            "description": "Item menu berhasil dihapus"
           },
           "404": {
-            "description": "Menu item not found"
+            "description": "Item menu tidak ditemukan"
           }
         }
       }
