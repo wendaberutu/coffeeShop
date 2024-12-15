@@ -109,7 +109,7 @@ class BroadcastController extends Controller
         foreach ($users as $user) {
             $messages[] = [
                 'target' => (string) $user->no_whatshap, // Pastikan target dalam format string
-                'message' => 'Halo ' . $user->nama . 'Kami menghadirkan promo spesial untuk Anda yang berusia ' . $awal . ' hingga ' . $akhir . ' tahun.' . $message, // Pesan yang dikirimkan
+                'message' => 'Halo ' . $user->nama . '! Kami menghadirkan promo spesial untuk Anda yang berusia ' . $awal . ' hingga ' . $akhir . ' tahun.' . $message, // Pesan yang dikirimkan
                 'delay' => '3', // Jeda 1 detik untuk setiap pengiriman
  
             ];
